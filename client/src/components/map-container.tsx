@@ -3,6 +3,7 @@ import { MapContainer as LeafletMapContainer, TileLayer, useMap, useMapEvents } 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import DirectionLines from "./direction-lines";
+import KyuseiSectors from "./kyusei-sectors";
 import { Plus, Minus, Layers, Crosshair, Maximize } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -227,12 +228,22 @@ export default function MapContainer({
           setCurrentPosition={setCurrentPosition} 
         />
         
-        <DirectionLines
-          center={currentPosition}
-          showPrimaryDirections={showPrimaryDirections}
-          showSecondaryDirections={showSecondaryDirections}
-          radius={displayRadius}
-        />
+        {!showKyuseiMode && (
+          <DirectionLines
+            center={currentPosition}
+            showPrimaryDirections={showPrimaryDirections}
+            showSecondaryDirections={showSecondaryDirections}
+            radius={displayRadius}
+          />
+        )}
+        
+        {showKyuseiMode && kyuseiSectors.length > 0 && (
+          <KyuseiSectors
+            center={currentPosition}
+            sectors={kyuseiSectors}
+            radius={120000}
+          />
+        )}
         
         <MapControls />
         <StatusBar currentPosition={currentPosition} zoom={zoom} />
