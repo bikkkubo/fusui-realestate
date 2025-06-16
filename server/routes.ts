@@ -150,6 +150,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Kyusei Analysis endpoints
+  app.get("/api/kyusei-analysis/:locationId", async (req, res) => {
+    try {
+      const locationId = parseInt(req.params.locationId);
+      const analysis = await storage.getKyuseiAnalysis(locationId);
+      if (!analysis) {
+        return res.status(404).json({ error: "Kyusei analysis not found" });
+      }
+      res.json(analysis);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get kyusei analysis" });
+    }
+  });
+
+  app.post("/api/kyusei-analysis", async (req, res) => {
+    try {
+      const data = insertKyuseiAnalysisSchema.parse(req.body);
+      const analysis = await storage.createKyuseiAnalysis(data);
+      res.status(201).json(analysis);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid kyusei analysis data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create kyusei analysis" });
+    }
+  });
+
+  app.get("/api/kyusei-history/:sessionId", async (req, res) => {
+    try {
+      const sessionId = req.params.sessionId;
+      const analyses = await storage.getKyuseiAnalysesByUser(sessionId);
+      res.json(analyses);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get kyusei history" });
+    }
+  });
+
+  // User Profile endpoints
+  app.get("/api/user-profile/:sessionId", async (req, res) => {
+    try {
+      const sessionId = req.params.sessionId;
+      const profile = await storage.getUserProfile(sessionId);
+      if (!profile) {
+        return res.status(404).json({ error: "User profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get user profile" });
+    }
+  });
+
+  app.post("/api/user-profile", async (req, res) => {
+    try {
+      const data = insertUserProfileSchema.parse(req.body);
+      const profile = await storage.createUserProfile(data);
+      res.status(201).json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid user profile data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create user profile" });
+    }
+  });
+
+  app.put("/api/user-profile/:sessionId", async (req, res) => {
+    try {
+      const sessionId = req.params.sessionId;
+      const data = insertUserProfileSchema.partial().parse(req.body);
+      const profile = await storage.updateUserProfile(sessionId, data);
+      if (!profile) {
+        return res.status(404).json({ error: "User profile not found" });
+      }
+      res.json(profile);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid user profile data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update user profile" });
+    }
+  });
+
   // Calculate elevation for coordinates (mock implementation)
   app.get("/api/elevation", async (req, res) => {
     try {
