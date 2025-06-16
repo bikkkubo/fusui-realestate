@@ -27,6 +27,8 @@ interface MapContainerProps {
   isLoading: boolean;
   kyuseiSectors: Array<{start: number, end: number}>;
   showKyuseiMode: boolean;
+  isMobile?: boolean;
+  kyuseiFormOffset?: number;
 }
 
 function MapController({ currentPosition, setCurrentPosition }: { currentPosition: { lat: number; lng: number }; setCurrentPosition: (position: { lat: number; lng: number }) => void }) {
@@ -205,7 +207,9 @@ export default function MapContainer({
   zoom,
   isLoading,
   kyuseiSectors,
-  showKyuseiMode
+  showKyuseiMode,
+  isMobile = false,
+  kyuseiFormOffset = 0
 }: MapContainerProps) {
   const mapRef = useRef<L.Map | null>(null);
 

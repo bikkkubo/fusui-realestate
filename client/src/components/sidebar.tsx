@@ -41,6 +41,8 @@ interface SidebarProps {
   setIsLoading: (loading: boolean) => void;
   showKyuseiMode: boolean;
   onToggleKyuseiMode: () => void;
+  isMobile?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export default function Sidebar({
@@ -60,7 +62,9 @@ export default function Sidebar({
   isLoading,
   setIsLoading,
   showKyuseiMode,
-  onToggleKyuseiMode
+  onToggleKyuseiMode,
+  isMobile = false,
+  onCloseMobile
 }: SidebarProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();

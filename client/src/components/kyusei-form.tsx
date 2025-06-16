@@ -12,12 +12,14 @@ interface KyuseiFormProps {
   currentPosition: { lat: number; lng: number };
   onSectorsCalculated: (sectors: Array<{start: number, end: number}>) => void;
   onClose: () => void;
+  isMobile?: boolean;
 }
 
 export default function KyuseiForm({ 
   currentPosition, 
   onSectorsCalculated, 
-  onClose 
+  onClose,
+  isMobile = false
 }: KyuseiFormProps) {
   const [birthYear, setBirthYear] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
@@ -98,7 +100,7 @@ export default function KyuseiForm({
         </CardHeader>
         
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-2 md:grid-cols-4'} gap-4`}>
             {/* 生年月日入力 */}
             <div className="space-y-2">
               <Label className="text-sm font-medium">生年月日</Label>
