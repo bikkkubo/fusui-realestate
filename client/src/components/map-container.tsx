@@ -24,6 +24,8 @@ interface MapContainerProps {
   markers: any[];
   zoom: number;
   isLoading: boolean;
+  kyuseiSectors: Array<{start: number, end: number}>;
+  showKyuseiMode: boolean;
 }
 
 function MapController({ currentPosition, setCurrentPosition }: { currentPosition: { lat: number; lng: number }; setCurrentPosition: (position: { lat: number; lng: number }) => void }) {
@@ -200,7 +202,9 @@ export default function MapContainer({
   displayRadius,
   markers,
   zoom,
-  isLoading
+  isLoading,
+  kyuseiSectors,
+  showKyuseiMode
 }: MapContainerProps) {
   const mapRef = useRef<L.Map | null>(null);
 

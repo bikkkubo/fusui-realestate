@@ -19,7 +19,8 @@ import {
   Trash2, 
   Download,
   Image as ImageIcon,
-  Compass
+  Compass,
+  Star
 } from "lucide-react";
 
 interface SidebarProps {
@@ -38,6 +39,8 @@ interface SidebarProps {
   onLocationJump: (lat: number, lng: number) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  showKyuseiMode: boolean;
+  onToggleKyuseiMode: () => void;
 }
 
 export default function Sidebar({
@@ -55,7 +58,9 @@ export default function Sidebar({
   onClearMarkers,
   onLocationJump,
   isLoading,
-  setIsLoading
+  setIsLoading,
+  showKyuseiMode,
+  onToggleKyuseiMode
 }: SidebarProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -289,6 +294,30 @@ export default function Sidebar({
               <p>• マーカーをドラッグ移動可能</p>
               <p>• 右クリックでマーカー削除</p>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Kyusei Mode Toggle */}
+        <Card className="m-4 mb-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              九星気学モード
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              onClick={onToggleKyuseiMode}
+              className={`w-full ${showKyuseiMode ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-primary hover:bg-primary/90'}`}
+            >
+              <Star className="h-4 w-4 mr-2" />
+              {showKyuseiMode ? '九星気学モード ON' : '九星気学モード'}
+            </Button>
+            {showKyuseiMode && (
+              <p className="text-xs text-gray-500 mt-2">
+                生年月日から吉方位を計算して地図に表示します
+              </p>
+            )}
           </CardContent>
         </Card>
 

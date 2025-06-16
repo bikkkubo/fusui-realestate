@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/sidebar";
 import MapContainer from "@/components/map-container";
+import KyuseiForm from "@/components/kyusei-form";
 import { useMap } from "@/hooks/use-map";
 
 export default function FengShuiMap() {
@@ -9,6 +10,8 @@ export default function FengShuiMap() {
   const [showPrimaryDirections, setShowPrimaryDirections] = useState(true);
   const [showSecondaryDirections, setShowSecondaryDirections] = useState(true);
   const [displayRadius, setDisplayRadius] = useState(1000);
+  const [showKyuseiMode, setShowKyuseiMode] = useState(false);
+  const [kyuseiSectors, setKyuseiSectors] = useState<Array<{start: number, end: number}>>([]);
   
   const {
     currentPosition,
@@ -28,6 +31,15 @@ export default function FengShuiMap() {
 
   return (
     <div className="flex h-screen bg-background">
+      {/* Top Form for Kyusei Mode */}
+      {showKyuseiMode && (
+        <KyuseiForm
+          currentPosition={currentPosition}
+          onSectorsCalculated={setKyuseiSectors}
+          onClose={() => setShowKyuseiMode(false)}
+        />
+      )}
+      
       <Sidebar
         searchAddress={searchAddress}
         setSearchAddress={setSearchAddress}
@@ -44,6 +56,8 @@ export default function FengShuiMap() {
         onLocationJump={(lat: number, lng: number) => setCurrentPosition({ lat, lng })}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
+        showKyuseiMode={showKyuseiMode}
+        onToggleKyuseiMode={() => setShowKyuseiMode(!showKyuseiMode)}
       />
       <MapContainer
         currentPosition={currentPosition}
@@ -54,6 +68,8 @@ export default function FengShuiMap() {
         markers={markers}
         zoom={zoom}
         isLoading={isLoading}
+        kyuseiSectors={kyuseiSectors}
+        showKyuseiMode={showKyuseiMode}
       />
     </div>
   );
