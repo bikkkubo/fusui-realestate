@@ -51,7 +51,7 @@ function MapController({ currentPosition, setCurrentPosition }: { currentPositio
   return null;
 }
 
-function StatusBar({ currentPosition, zoom }: { currentPosition: { lat: number; lng: number }; zoom: number }) {
+function StatusBar({ currentPosition, zoom, isMobile = false }: { currentPosition: { lat: number; lng: number }; zoom: number; isMobile?: boolean }) {
   const [mousePosition, setMousePosition] = useState<{ lat: number; lng: number } | null>(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -69,13 +69,13 @@ function StatusBar({ currentPosition, zoom }: { currentPosition: { lat: number; 
   });
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 z-10">
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center space-x-4">
+    <div className={`absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-2 z-10 ${isMobile ? 'status-bar' : ''}`}>
+      <div className={`flex items-center ${isMobile ? 'flex-col space-y-1' : 'justify-between'} text-sm`}>
+        <div className={`flex items-center ${isMobile ? 'space-x-2' : 'space-x-4'}`}>
           <span className="text-gray-600">ズーム:</span>
           <span className="font-mono text-primary">{zoom}</span>
           
-          <span className="text-gray-600">|</span>
+          {!isMobile && <span className="text-gray-600">|</span>}
           
           <span className="text-gray-600">マウス位置:</span>
           <span className="font-mono text-secondary">
@@ -83,22 +83,26 @@ function StatusBar({ currentPosition, zoom }: { currentPosition: { lat: number; 
           </span>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-xs text-gray-600">接続中</span>
+        {!isMobile && (
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-xs text-gray-600">接続中</span>
+            </div>
+            <span className="text-gray-400">|</span>
+            <span className="text-xs text-gray-600">
+              最終更新: {lastUpdated.toTimeString().slice(0, 8)}
+            </span>
           </div>
-          <span className="text-gray-400">|</span>
-          <span className="text-xs text-gray-600">
-            最終更新: {lastUpdated.toTimeString().slice(0, 8)}
-          </span>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-function MapControls() {
+
+
+function MapControls({ isMobile = false }: { isMobile?: boolean }) {
   const map = useMap();
   const [mapType, setMapType] = useState("streets");
 
@@ -110,7 +114,6 @@ function MapControls() {
   };
 
   const toggleMapType = () => {
-    // This would switch between different tile layers in a real implementation
     setMapType(mapType === "streets" ? "satellite" : "streets");
   };
 
@@ -122,25 +125,28 @@ function MapControls() {
     }
   };
 
+  const buttonSize = isMobile ? "w-12 h-12" : "w-10 h-10";
+  const iconSize = isMobile ? "h-5 w-5" : "h-4 w-4";
+
   return (
-    <div className="absolute top-4 right-4 z-20 space-y-2">
+    <div className={`absolute ${isMobile ? 'bottom-20 right-4' : 'top-4 right-4'} z-20 space-y-2`}>
       {/* Zoom Controls */}
       <Card className="p-0 overflow-hidden">
         <Button
           onClick={handleZoomIn}
           variant="ghost"
           size="sm"
-          className="w-10 h-10 rounded-none border-b"
+          className={`${buttonSize} rounded-none border-b`}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className={iconSize} />
         </Button>
         <Button
           onClick={handleZoomOut}
           variant="ghost"
           size="sm"
-          className="w-10 h-10 rounded-none"
+          className={`${buttonSize} rounded-none`}
         >
-          <Minus className="h-4 w-4" />
+          <Minus className={iconSize} />
         </Button>
       </Card>
 
@@ -150,10 +156,10 @@ function MapControls() {
           onClick={toggleMapType}
           variant="ghost"
           size="sm"
-          className="w-10 h-10"
+          className={buttonSize}
           title="地図タイプ切替"
         >
-          <Layers className="h-4 w-4" />
+          <Layers className={iconSize} />
         </Button>
       </Card>
 
@@ -163,29 +169,31 @@ function MapControls() {
           onClick={handleRecenter}
           variant="ghost"
           size="sm"
-          className="w-10 h-10"
+          className={buttonSize}
           title="中心に戻る"
         >
-          <Crosshair className="h-4 w-4" />
+          <Crosshair className={iconSize} />
         </Button>
       </Card>
 
-      {/* Fullscreen */}
-      <Card className="p-2">
-        <Button
-          onClick={toggleFullscreen}
-          variant="ghost"
-          size="sm"
-          className="w-10 h-10"
-          title="フルスクリーン"
-        >
-          <Maximize className="h-4 w-4" />
-        </Button>
-      </Card>
+      {/* Fullscreen - Hidden on mobile */}
+      {!isMobile && (
+        <Card className="p-2">
+          <Button
+            onClick={toggleFullscreen}
+            variant="ghost"
+            size="sm"
+            className={buttonSize}
+            title="フルスクリーン"
+          >
+            <Maximize className={iconSize} />
+          </Button>
+        </Card>
+      )}
 
       {/* Compass */}
       <Card className="p-3">
-        <div className="w-12 h-12 relative">
+        <div className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} relative`}>
           <div className="w-full h-full border-2 border-gray-300 rounded-full relative">
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-0 h-0 border-l-2 border-r-2 border-b-4 border-transparent border-b-red-500"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-gray-800 rounded-full"></div>
@@ -221,6 +229,7 @@ export default function MapContainer({
         className="w-full h-full"
         zoomControl={false}
         ref={mapRef}
+        style={isMobile && kyuseiFormOffset > 0 ? { paddingTop: `${kyuseiFormOffset}px` } : {}}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -249,8 +258,8 @@ export default function MapContainer({
           />
         )}
         
-        <MapControls />
-        <StatusBar currentPosition={currentPosition} zoom={zoom} />
+        <MapControls isMobile={isMobile} />
+        <StatusBar currentPosition={currentPosition} zoom={zoom} isMobile={isMobile} />
       </LeafletMapContainer>
 
       {/* Loading Overlay */}

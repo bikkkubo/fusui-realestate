@@ -20,7 +20,8 @@ import {
   Download,
   Image as ImageIcon,
   Compass,
-  Star
+  Star,
+  X
 } from "lucide-react";
 
 interface SidebarProps {
@@ -146,12 +147,24 @@ export default function Sidebar({
   };
 
   return (
-    <div className="w-80 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+    <div className={`${isMobile ? 'w-full' : 'w-80'} bg-white shadow-lg border-r border-gray-200 flex flex-col`}>
       {/* Header */}
       <div className="p-4 border-b border-gray-200 bg-primary text-white">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-semibold">風水方位分析</h1>
-          <span className="text-xs bg-white/20 px-2 py-1 rounded">v2.0</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs bg-white/20 px-2 py-1 rounded">v2.0</span>
+            {isMobile && onCloseMobile && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onCloseMobile}
+                className="text-white hover:bg-white/10 p-1"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <p className="text-sm opacity-90 mt-1">高精度方位計算システム</p>
       </div>
