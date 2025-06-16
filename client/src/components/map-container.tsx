@@ -205,7 +205,7 @@ function MapControls({ isMobile = false }: { isMobile?: boolean }) {
   );
 }
 
-export default function MapContainer({
+function MapContainer({
   currentPosition,
   setCurrentPosition,
   showPrimaryDirections,
@@ -276,3 +276,5 @@ export default function MapContainer({
     </div>
   );
 }
+
+export default MapContainer;
