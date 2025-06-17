@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/sidebar";
-import MapContainer from "@/components/map-container";
+import HybridMap from "@/components/hybrid-map";
 import KyuseiForm from "@/components/kyusei-form";
 import { Button } from "@/components/ui/button";
 import { useMap } from "@/hooks/use-map";
@@ -95,7 +95,7 @@ export default function FengShuiMap() {
 
       {/* Map Container */}
       <div className={`flex-1 ${isMobile ? 'w-full' : ''}`}>
-        <MapContainer
+        <HybridMap
           currentPosition={currentPosition}
           setCurrentPosition={setCurrentPosition}
           showPrimaryDirections={showPrimaryDirections}
