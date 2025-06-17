@@ -35,7 +35,7 @@ export default function FengShuiMap() {
   });
 
   return (
-    <div className="flex h-screen bg-background relative">
+    <div className={`${showKyuseiMode && !isMobile ? 'flex flex-col' : 'flex'} h-screen bg-background relative`}>
       {/* Mobile Menu Button */}
       {isMobile && (
         <Button
@@ -56,9 +56,9 @@ export default function FengShuiMap() {
         />
       )}
 
-      {/* Top Form for Kyusei Mode - Mobile Responsive */}
-      {showKyuseiMode && (
-        <div className={isMobile ? "kyusei-form-mobile" : ""}>
+      {/* Top Form for Kyusei Mode - Desktop */}
+      {showKyuseiMode && !isMobile && (
+        <div className="flex-shrink-0 w-full">
           <KyuseiForm
             currentPosition={currentPosition}
             onSectorsCalculated={setKyuseiSectors}
@@ -67,9 +67,23 @@ export default function FengShuiMap() {
           />
         </div>
       )}
-      
-      {/* Sidebar - Mobile Responsive */}
-      <div className={`${isMobile ? `sidebar-mobile ${isOpen ? 'open' : ''}` : ''}`}>
+
+      {/* Top Form for Kyusei Mode - Mobile */}
+      {showKyuseiMode && isMobile && (
+        <div className="kyusei-form-mobile">
+          <KyuseiForm
+            currentPosition={currentPosition}
+            onSectorsCalculated={setKyuseiSectors}
+            onClose={() => setShowKyuseiMode(false)}
+            isMobile={isMobile}
+          />
+        </div>
+      )}
+
+      {/* Main Content Container */}
+      <div className={`${showKyuseiMode && !isMobile ? 'flex flex-1 min-h-0' : 'flex flex-1'}`}>
+        {/* Sidebar - Mobile Responsive */}
+        <div className={`${isMobile ? `sidebar-mobile ${isOpen ? 'open' : ''}` : ''}`}>
         <Sidebar
           searchAddress={searchAddress}
           setSearchAddress={setSearchAddress}

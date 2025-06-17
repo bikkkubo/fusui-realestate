@@ -85,7 +85,7 @@ export default function KyuseiForm({
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-lg border-b">
+    <div className={`${isMobile ? 'fixed top-0 left-0 right-0 z-50' : 'relative'} bg-white shadow-lg border-b`}>
       <Card className="rounded-none border-0">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
