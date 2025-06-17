@@ -369,20 +369,29 @@ export default function HybridMap({
 
   // Check for Google Maps API errors and fallback to Leaflet
   useEffect(() => {
-    const checkGoogleMapsErrors = () => {
-      const errors = ['InvalidKey', 'NoApiKeys', 'ApiProjectMapError'];
-      const hasError = errors.some(error => 
-        document.querySelector(`[data-error="${error}"]`) || 
-        console.error.toString().includes(error)
-      );
+    const checkGoogleMapsAvailability = () => {
+      // Check if API key is available
+      if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+        console.log('Google Maps API key not configured, using OpenStreetMap');
+        setGoogleMapError(true);
+        setMapType('leaflet');
+        return;
+      }
       
-      if (hasError || !import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+      // Check for Google Maps loading errors
+      const errorElements = document.querySelectorAll('[data-error], .gm-err-container');
+      if (errorElements.length > 0) {
+        console.log('Google Maps error detected, falling back to OpenStreetMap');
         setGoogleMapError(true);
         setMapType('leaflet');
       }
     };
 
-    const timer = setTimeout(checkGoogleMapsErrors, 3000);
+    // Initial check
+    checkGoogleMapsAvailability();
+    
+    // Check again after a delay to catch loading errors
+    const timer = setTimeout(checkGoogleMapsAvailability, 2000);
     return () => clearTimeout(timer);
   }, []);
 
