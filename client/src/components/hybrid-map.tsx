@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, Minus, Layers, Crosshair, Maximize } from "lucide-react";
+import { Plus, Minus, Layers, Crosshair, Maximize, Map } from "lucide-react";
 import DirectionLines from "./direction-lines";
 import KyuseiSectors from "./kyusei-sectors";
-import { MapContainer as LeafletMapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import FortuneOverlay, { FortuneOverlaySpinner } from "./fortune-overlay";
+import { MapContainer as LeafletMapContainer, TileLayer, useMap, useMapEvents, LayersControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -118,12 +119,18 @@ function MapControls({
   map, 
   isMobile = false,
   mapType = "leaflet",
-  onToggleMapType
+  onToggleMapType,
+  showFortuneOverlay,
+  onToggleFortuneOverlay,
+  overlayLoading
 }: { 
   map?: any; 
   isMobile?: boolean;
   mapType?: string;
   onToggleMapType?: () => void;
+  showFortuneOverlay?: boolean;
+  onToggleFortuneOverlay?: () => void;
+  overlayLoading?: boolean;
 }) {
   const handleZoomIn = () => {
     if (mapType === 'google' && map && window.google) {
@@ -198,6 +205,26 @@ function MapControls({
           <Layers className={iconSize} />
         </Button>
       </Card>
+
+      {/* Fortune Overlay Toggle - Only show for Leaflet maps */}
+      {mapType === 'leaflet' && (
+        <Card className="p-2">
+          <Button
+            onClick={onToggleFortuneOverlay}
+            variant={showFortuneOverlay ? "default" : "ghost"}
+            size="sm"
+            className={buttonSize}
+            title="運気ヒートマップ"
+            disabled={overlayLoading}
+          >
+            {overlayLoading ? (
+              <div className={`${iconSize} animate-spin rounded-full border-2 border-gray-300 border-t-gray-600`}></div>
+            ) : (
+              <Map className={iconSize} />
+            )}
+          </Button>
+        </Card>
+      )}
 
       <Card className="p-2">
         <Button
@@ -365,6 +392,8 @@ export default function HybridMap({
 }: HybridMapProps) {
   const [mapType, setMapType] = useState<'google' | 'leaflet'>('google');
   const [googleMapError, setGoogleMapError] = useState(false);
+  const [showFortuneOverlay, setShowFortuneOverlay] = useState(false);
+  const [overlayLoading, setOverlayLoading] = useState(false);
   const mapRef = useRef<L.Map | null>(null);
 
   // Check for Google Maps API errors and fallback to Leaflet
