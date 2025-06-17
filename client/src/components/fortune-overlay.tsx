@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Polygon, LayersControl } from "react-leaflet";
 import { buildLuckOverlay, OverlayData, getGridStats } from "@/lib/overlay-calculations";
-import { KyuseiSector } from "@/lib/kyusei-calculations";
 
 interface FortuneOverlayProps {
   center: { lat: number; lng: number };
-  kyuseiSectors: KyuseiSector[];
+  kyuseiSectors: Array<{start: number, end: number}>;
   isVisible: boolean;
   onLoadingChange?: (loading: boolean) => void;
 }

@@ -1,5 +1,4 @@
 import { calculateBearing, calculateEndpoint } from './feng-shui-calculations';
-import { getGoodAzimuths, KyuseiSector } from './kyusei-calculations';
 
 export interface GridCell {
   lat: number;
@@ -54,7 +53,7 @@ function createCellBounds(centerLat: number, centerLng: number, cellSizeKm: numb
 /**
  * Check if a bearing falls within any of the good sectors
  */
-function isBearingGood(bearing: number, goodSectors: KyuseiSector[]): boolean {
+function isBearingGood(bearing: number, goodSectors: Array<{start: number, end: number}>): boolean {
   return goodSectors.some(sector => {
     let start = sector.start;
     let end = sector.end;
@@ -73,7 +72,7 @@ function isBearingGood(bearing: number, goodSectors: KyuseiSector[]): boolean {
  */
 export function generateFortuneGrid(
   homePosition: { lat: number; lng: number },
-  goodSectors: KyuseiSector[]
+  goodSectors: Array<{start: number, end: number}>
 ): GridCell[] {
   const cells: GridCell[] = [];
   const { lat: homeLat, lng: homeLng } = homePosition;
@@ -155,7 +154,7 @@ export function groupCellsIntoPolygons(cells: GridCell[]): Array<Array<[number, 
  */
 export async function buildLuckOverlay(
   homePosition: { lat: number; lng: number },
-  goodSectors: KyuseiSector[],
+  goodSectors: Array<{start: number, end: number}>,
   onProgress?: (progress: number) => void
 ): Promise<OverlayData> {
   return new Promise((resolve) => {

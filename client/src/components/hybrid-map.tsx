@@ -484,6 +484,14 @@ export default function HybridMap({
               radius={120000}
             />
           )}
+
+          {/* Fortune Overlay */}
+          <FortuneOverlay
+            center={currentPosition}
+            kyuseiSectors={kyuseiSectors}
+            isVisible={showFortuneOverlay && showKyuseiMode}
+            onLoadingChange={setOverlayLoading}
+          />
         </LeafletMapContainer>
       )}
       
@@ -492,6 +500,15 @@ export default function HybridMap({
         isMobile={isMobile} 
         mapType={mapType}
         onToggleMapType={toggleMapType}
+        showFortuneOverlay={showFortuneOverlay}
+        onToggleFortuneOverlay={() => setShowFortuneOverlay(!showFortuneOverlay)}
+        overlayLoading={overlayLoading}
+      />
+      
+      {/* Fortune Overlay Loading Spinner */}
+      <FortuneOverlaySpinner 
+        isVisible={overlayLoading} 
+        progress={0} 
       />
       <StatusBar 
         currentPosition={currentPosition} 
