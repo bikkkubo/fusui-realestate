@@ -219,7 +219,7 @@ export default function Sidebar({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">標高:</span>
-                <span className="font-mono text-secondary">{elevation.toFixed(3)}m</span>
+                <span className="font-mono text-secondary">{typeof elevation === 'number' ? elevation.toFixed(3) : '---'}m</span>
               </div>
             </div>
             <Button 
