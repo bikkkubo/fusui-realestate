@@ -283,7 +283,7 @@ function GoogleMapComponent({
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
-    const loadGoogleMaps = () => {
+    const loadGoogleMaps = async () => {
       if (window.google && window.google.maps) {
         initializeMap();
         return;
@@ -295,20 +295,29 @@ function GoogleMapComponent({
         return;
       }
       
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-
-      script.onerror = () => {
-        console.error('Failed to load Google Maps API');
-      };
-
-      window.initMap = () => {
+      try {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&loading=async`;
+        script.async = true;
+        
+        script.onerror = () => {
+          console.error('Failed to load Google Maps API');
+        };
+        
+        document.head.appendChild(script);
+        
+        // Wait for Google Maps to load
+        await new Promise((resolve, reject) => {
+          script.onload = resolve;
+          script.onerror = reject;
+        });
+        
+        // Import maps library
+        await (window.google?.maps as any)?.importLibrary?.('maps');
         initializeMap();
-      };
-
-      document.head.appendChild(script);
+      } catch (error) {
+        console.error('Error loading Google Maps:', error);
+      }
     };
 
     const initializeMap = () => {
