@@ -242,15 +242,21 @@ export default function SimpleGoogleMap({
         
         document.head.appendChild(script);
         
-        // Wait for Google Maps to load
+        // Wait for Google Maps to load and initialize
         await new Promise((resolve, reject) => {
-          script.onload = resolve;
+          script.onload = () => {
+            // Small delay to ensure Google Maps is fully loaded
+            setTimeout(() => {
+              if (window.google && window.google.maps) {
+                initializeMap();
+                resolve(true);
+              } else {
+                reject(new Error('Google Maps failed to initialize'));
+              }
+            }, 100);
+          };
           script.onerror = reject;
         });
-        
-        // Import maps library
-        await google.maps.importLibrary('maps');
-        initializeMap();
       } catch (error) {
         console.error('Error loading Google Maps:', error);
       }
