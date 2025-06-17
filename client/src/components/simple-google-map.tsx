@@ -225,8 +225,14 @@ export default function SimpleGoogleMap({
         return;
       }
 
+      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+      if (!apiKey) {
+        console.error('Google Maps API key not found');
+        return;
+      }
+      
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}&libraries=geometry&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
       script.async = true;
       script.defer = true;
 
@@ -246,6 +252,7 @@ export default function SimpleGoogleMap({
           streetViewControl: false,
           fullscreenControl: false,
           zoomControl: false,
+          gestureHandling: 'cooperative',
           styles: [
             {
               featureType: "poi",
@@ -317,7 +324,9 @@ export default function SimpleGoogleMap({
         ref={mapRef} 
         className="w-full h-full"
         style={{
-          minHeight: "400px",
+          minHeight: "100vh",
+          height: "100%",
+          width: "100%",
           paddingTop: isMobile && kyuseiFormOffset > 0 ? `${kyuseiFormOffset}px` : "0"
         }}
       />
