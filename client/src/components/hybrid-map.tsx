@@ -301,6 +301,9 @@ function GoogleMapComponent({
       
       if (!mapId) {
         console.warn('MAP_ID missing - AdvancedMarkerElement may not work properly');
+        console.log('import.meta.env.VITE_GOOGLE_MAPS_MAP_ID:', import.meta.env.VITE_GOOGLE_MAPS_MAP_ID);
+      } else {
+        console.log('Map ID configured:', mapId);
       }
       
       try {
@@ -336,27 +339,48 @@ function GoogleMapComponent({
 
           const newMap = new window.google.maps.Map(mapRef.current, mapConfig);
 
-          // Create custom content for AdvancedMarkerElement
-          const markerContent = document.createElement('div');
-          markerContent.style.cssText = `
-            width: 16px;
-            height: 16px;
-            background-color: #3b82f6;
-            border: 2px solid white;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          `;
+          // Create AdvancedMarkerElement with Map ID support
+          try {
+            const markerContent = document.createElement('div');
+            markerContent.style.cssText = `
+              width: 16px;
+              height: 16px;
+              background-color: #3b82f6;
+              border: 2px solid white;
+              border-radius: 50%;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            `;
 
-          // Use AdvancedMarkerElement instead of deprecated Marker
-          const centerMarker = new window.google.maps.marker.AdvancedMarkerElement({
-            position: currentPosition,
-            map: newMap,
-            title: "現在位置",
-            content: markerContent
-          });
-          
-          // Store marker reference for position updates
-          setMarkerElements([centerMarker]);
+            const centerMarker = new window.google.maps.marker.AdvancedMarkerElement({
+              position: currentPosition,
+              map: newMap,
+              title: "現在位置",
+              content: markerContent
+            });
+            
+            setMarkerElements([centerMarker]);
+            console.log('AdvancedMarkerElement created successfully');
+          } catch (markerError) {
+            console.error('AdvancedMarkerElement creation failed:', markerError);
+            
+            // Fallback to basic marker if AdvancedMarkerElement fails
+            const fallbackMarker = new window.google.maps.Marker({
+              position: currentPosition,
+              map: newMap,
+              title: "現在位置",
+              icon: {
+                path: window.google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#3b82f6",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2
+              }
+            });
+            
+            setMarkerElements([fallbackMarker]);
+            console.log('Fallback to basic Marker due to AdvancedMarkerElement error');
+          }
 
           newMap.addListener('click', (e: any) => {
             if (e.latLng) {
