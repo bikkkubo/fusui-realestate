@@ -292,9 +292,15 @@ function GoogleMapComponent({
       }
 
       const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+      const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
+      
       if (!apiKey) {
         console.error('Google Maps API key not configured');
         return;
+      }
+      
+      if (!mapId) {
+        console.warn('MAP_ID missing - AdvancedMarkerElement may not work properly');
       }
       
       try {
@@ -312,16 +318,23 @@ function GoogleMapComponent({
     const initializeMap = () => {
       if (mapRef.current && window.google) {
         try {
-          const newMap = new window.google.maps.Map(mapRef.current, {
+          const mapConfig: any = {
             center: currentPosition,
             zoom: zoom,
-            mapId: "FENG_SHUI_MAP", // Required for AdvancedMarkerElement
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: false,
             zoomControl: false,
             gestureHandling: 'cooperative',
-          });
+          };
+
+          // Use Map ID if available for AdvancedMarkerElement support
+          const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
+          if (mapId) {
+            mapConfig.mapId = mapId;
+          }
+
+          const newMap = new window.google.maps.Map(mapRef.current, mapConfig);
 
           // Create custom content for AdvancedMarkerElement
           const markerContent = document.createElement('div');
