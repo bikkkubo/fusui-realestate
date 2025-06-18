@@ -76,3 +76,7 @@ temp/
 # Replit specific
 .replit
 replit.nix
+
+# Deprecated files
+deprecated/
+attached_assets/

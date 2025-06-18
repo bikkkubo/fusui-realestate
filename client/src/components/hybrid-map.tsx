@@ -297,9 +297,11 @@ function GoogleMapComponent({
       }
       
       try {
-        const { google, AdvancedMarkerElement } = await initializeGoogleMaps();
-        setMap({ google, AdvancedMarkerElement });
-        initializeMap();
+        const { google, AdvancedMarkerElement, isLoaded } = await initializeGoogleMaps();
+        if (isLoaded) {
+          setMap({ google, AdvancedMarkerElement });
+          initializeMap();
+        }
       } catch (error) {
         console.error('Error loading Google Maps:', error);
       }
