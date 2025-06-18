@@ -315,6 +315,7 @@ function GoogleMapComponent({
           const newMap = new window.google.maps.Map(mapRef.current, {
             center: currentPosition,
             zoom: zoom,
+            mapId: "FENG_SHUI_MAP", // Required for AdvancedMarkerElement
             mapTypeControl: false,
             streetViewControl: false,
             fullscreenControl: false,
@@ -322,11 +323,23 @@ function GoogleMapComponent({
             gestureHandling: 'cooperative',
           });
 
+          // Create custom content for AdvancedMarkerElement
+          const markerContent = document.createElement('div');
+          markerContent.style.cssText = `
+            width: 16px;
+            height: 16px;
+            background-color: #3b82f6;
+            border: 2px solid white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          `;
+
           // Use AdvancedMarkerElement instead of deprecated Marker
           const centerMarker = new window.google.maps.marker.AdvancedMarkerElement({
             position: currentPosition,
             map: newMap,
-            title: "現在位置"
+            title: "現在位置",
+            content: markerContent
           });
           
           // Store marker reference for position updates
