@@ -5,6 +5,7 @@ import { Plus, Minus, Layers, Crosshair, Maximize, Map } from "lucide-react";
 import DirectionLines from "./direction-lines";
 import KyuseiSectors from "./kyusei-sectors";
 import FortuneOverlay, { FortuneOverlaySpinner } from "./fortune-overlay";
+import { initializeGoogleMaps } from "@/lib/map-loader";
 import { MapContainer as LeafletMapContainer, TileLayer, useMap, useMapEvents, LayersControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -296,31 +297,9 @@ function GoogleMapComponent({
       }
       
       try {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&loading=async`;
-        script.async = true;
-        
-        script.onerror = () => {
-          console.error('Failed to load Google Maps API');
-        };
-        
-        document.head.appendChild(script);
-        
-        // Wait for Google Maps to load and initialize
-        await new Promise((resolve, reject) => {
-          script.onload = () => {
-            // Small delay to ensure Google Maps is fully loaded
-            setTimeout(() => {
-              if (window.google && window.google.maps) {
-                initializeMap();
-                resolve(true);
-              } else {
-                reject(new Error('Google Maps failed to initialize'));
-              }
-            }, 100);
-          };
-          script.onerror = reject;
-        });
+        const { google, AdvancedMarkerElement } = await initializeGoogleMaps();
+        setMap({ google, AdvancedMarkerElement });
+        initializeMap();
       } catch (error) {
         console.error('Error loading Google Maps:', error);
       }
