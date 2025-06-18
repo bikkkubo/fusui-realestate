@@ -281,6 +281,7 @@ function GoogleMapComponent({
 }) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<any>(null);
+  const [markerElements, setMarkerElements] = useState<any[]>([]);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
@@ -299,7 +300,8 @@ function GoogleMapComponent({
       try {
         const { google, AdvancedMarkerElement, isLoaded } = await initializeGoogleMaps();
         if (isLoaded) {
-          setMap({ google, AdvancedMarkerElement });
+          // Store Google instance globally
+          window.google = google;
           initializeMap();
         }
       } catch (error) {
@@ -320,19 +322,15 @@ function GoogleMapComponent({
             gestureHandling: 'cooperative',
           });
 
-          const centerMarker = new window.google.maps.Marker({
+          // Use AdvancedMarkerElement instead of deprecated Marker
+          const centerMarker = new window.google.maps.marker.AdvancedMarkerElement({
             position: currentPosition,
             map: newMap,
-            title: "現在位置",
-            icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: "#3b82f6",
-              fillOpacity: 1,
-              strokeColor: "#ffffff",
-              strokeWeight: 2
-            }
+            title: "現在位置"
           });
+          
+          // Store marker reference for position updates
+          setMarkerElements([centerMarker]);
 
           newMap.addListener('click', (e: any) => {
             if (e.latLng) {
@@ -357,8 +355,15 @@ function GoogleMapComponent({
   useEffect(() => {
     if (map && window.google) {
       map.setCenter(currentPosition);
+      
+      // Update center marker position with AdvancedMarkerElement
+      markerElements.forEach(marker => {
+        if (marker.title === "現在位置") {
+          marker.position = currentPosition;
+        }
+      });
     }
-  }, [map, currentPosition]);
+  }, [map, currentPosition, markerElements]);
 
   return (
     <div 
