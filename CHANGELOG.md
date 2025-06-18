@@ -1,5 +1,24 @@
 # 風水マップシステム変更履歴
 
+## v2.2.0 - Map ID環境変数対応 + パフォーマンス最適化 (2025-06-18)
+
+### 🔧 Map ID 設定対応
+- **NEW**: `VITE_GOOGLE_MAPS_MAP_ID` 環境変数サポート
+- Google Cloud Console Map ID 作成手順書 (`MAP_ID_SETUP.md`)
+- Map ID バリデーションとフォールバック機能
+- 開発環境での警告メッセージ最適化
+
+### ⚡ パフォーマンス最適化
+- グリッドオーバーレイの60fps最適化実装
+- `requestIdleCallback` による非ブロッキング計算
+- WebGL ベクターマップレイヤー対応
+- カスタムフック `useGoogleMap` 作成
+
+### 🏗️ アーキテクチャ改善
+- パフォーマンス監視ツール実装
+- FPS カウンター統合
+- メモリ効率化されたグリッド生成
+
 ## v2.1.0 - AdvancedMarkerElement完全移行 (2025-06-18)
 
 ### 🔧 Google Maps API 最適化
