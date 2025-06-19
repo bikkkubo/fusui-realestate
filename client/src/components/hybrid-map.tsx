@@ -301,9 +301,6 @@ function GoogleMapComponent({
       
       if (!mapId) {
         console.warn('MAP_ID missing - AdvancedMarkerElement may not work properly');
-        console.log('import.meta.env.VITE_GOOGLE_MAPS_MAP_ID:', import.meta.env.VITE_GOOGLE_MAPS_MAP_ID);
-      } else {
-        console.log('Map ID configured:', mapId);
       }
       
       try {
@@ -359,7 +356,7 @@ function GoogleMapComponent({
             });
             
             setMarkerElements([centerMarker]);
-            console.log('AdvancedMarkerElement created successfully');
+            // AdvancedMarkerElement created successfully
           } catch (markerError) {
             console.error('AdvancedMarkerElement creation failed:', markerError);
             
@@ -379,7 +376,7 @@ function GoogleMapComponent({
             });
             
             setMarkerElements([fallbackMarker]);
-            console.log('Fallback to basic Marker due to AdvancedMarkerElement error');
+            // Fallback to basic Marker due to AdvancedMarkerElement error
           }
 
           newMap.addListener('click', (e: any) => {
